@@ -4,6 +4,10 @@
 
 **Team:** Derek Weaver, Jake Bayman, Adam Ouahidy, Richie James, Bryn Biemiller
 
+<p align="center">
+  <img src="UsedCar_price_image.png" alt="Used Car Price Prediction" width="850">
+</p>
+
 ## Project Overview
 
 This project develops a machine learning system to predict the resale price of used vehicles based on factors such as mileage, age, make, model, fuel type, transmission, condition, and other vehicle characteristics.
