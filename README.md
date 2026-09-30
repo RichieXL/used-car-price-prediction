@@ -47,7 +47,7 @@ The Vehicle Sales & Market Trends dataset is currently the primary dataset under
 
 ## Data Pipeline
 
-The project follows a batch-based DataOps pipeline:
+The project follows a batch-based DataOps pipeline.
 
 ## System Architecture
 
