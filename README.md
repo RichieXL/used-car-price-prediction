@@ -49,6 +49,14 @@ The Vehicle Sales & Market Trends dataset is currently the primary dataset under
 
 The project follows a batch-based DataOps pipeline:
 
+## System Architecture
+
+The project follows an end-to-end machine learning pipeline that connects data ingestion, processing, model development, experiment tracking, and deployment.
+
+<p align="center">
+  <img src="ArcFlow.png" alt="Used Car Price Prediction System Architecture" width="1000">
+</p>
+
 ```text
 Raw Data
     ↓
