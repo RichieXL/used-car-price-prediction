@@ -1,12 +1,18 @@
 # Used Car Resale Price Prediction
 
-## BANA 7075 — Machine Learning Systems Design
-
-**Team:** Derek Weaver, Jake Bayman, Adam Ouahidy, Richie James, Bryn Biemiller
-
 <p align="center">
   <img src="UsedCar_price_image.png" alt="Used Car Price Prediction" width="850">
 </p>
+
+<p align="center">
+  <strong>A machine learning system for estimating used vehicle resale prices using vehicle characteristics and historical market data.</strong>
+</p>
+
+<p align="center">
+  BANA 7075 — Machine Learning Systems Design
+</p>
+
+**Team:** Derek Weaver, Jake Bayman, Adam Ouahidy, Richie James, Bryn Biemiller
 
 ## Project Overview
 
@@ -57,3 +63,5 @@ Data Versioning
 Model Training
     ↓
 Evaluation
+
+
