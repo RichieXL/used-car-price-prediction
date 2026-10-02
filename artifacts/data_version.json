@@ -1,0 +1,9 @@
+{
+    "source_file": "National_data_2_locations_Clean.csv",
+    "sha256": "f6c1f0fe3b580fa8387e8c5c7927f0bce816cd71f45a10546655bf37ee630379",
+    "rows": 459343,
+    "columns": 21,
+    "target": "Selling Price",
+    "random_state": 142,
+    "mvp_sample_size": 50000
+}

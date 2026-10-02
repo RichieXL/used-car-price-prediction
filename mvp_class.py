@@ -7,8 +7,6 @@ from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
-import mlflow
-import mlflow.sklearn
 
 import wandb
 
@@ -18,7 +16,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import Ridge, Lasso
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
 
 from xgboost import XGBRegressor
 import random
@@ -30,7 +28,7 @@ EXPERIMENT_NAME = f"Car_Price_Prediction_MVP"
 
 class Car_Training_Model():
     def __init__(self):
-        self.data_path = Path("uc-bana-7075/MVP/National_data_2_locations_Clean.csv") # Update this
+        self.data_path = Path("National_data_2_locations_Clean.csv") # Update this
         self.random_state = random.randint(0, 2**8)
 
         random.seed(self.random_state) # Added, you were not actually tracking randomc before.
@@ -261,18 +259,28 @@ class Car_Training_Model():
             ]
         )
 
-    def evaluate_model(self, model, X_test, y_test):
+    def evaluate_model(self, model, X_train, X_test, y_train, y_test):
         """Calculate common regression metrics."""
-        predictions = model.predict(X_test)
+        y_test_pred = model.predict(X_test)
+        y_train_pred = model.predict(X_train)
 
-        mae = mean_absolute_error(y_test, predictions)
-        rmse = np.sqrt(mean_squared_error(y_test, predictions))
-        r2 = r2_score(y_test, predictions)
-
+        mae_test = mean_absolute_error(y_test, y_test_pred)
+        rmse_test = np.sqrt(mean_squared_error(y_test, y_test_pred))
+        r2_test = r2_score(y_test, y_test_pred)
+        mape_test = mean_absolute_percentage_error(y_test, y_test_pred)
+        mae_train = mean_absolute_error(y_train, y_train_pred)
+        rmse_train = np.sqrt(mean_squared_error(y_train, y_train_pred))
+        r2_train = r2_score(y_train, y_train_pred)
+        mape_train = mean_absolute_percentage_error(y_train, y_train_pred)
         return {
-            "MAE": float(mae),
-            "RMSE": float(rmse),
-            "R2": float(r2),
+            "MAE_TEST": float(mae_test),
+            "RMSE_TEST": float(rmse_test),
+            "R2_TEST": float(r2_test),
+            "MAPE_TEST": float(mape_test),
+            "MAE_TRAIN": float(mae_train),
+            "RMSE_TRAIN": float(rmse_train),
+            "R2_TRAIN": float(r2_train),
+            "MAPE_TRAIN": float(mape_train)
         }
 
     def ridge(self, iteration, alpha = 10.0):
@@ -290,31 +298,21 @@ class Car_Training_Model():
         with wandb.init(project = EXPERIMENT_NAME, group = "Ridge", name = f"Ridge_{iteration}", config = {**ridge_params}) as run:
             
             self.ridge_model.fit(self.X_train, self.y_train)
-            self.ridge_metrics = self.evaluate_model(self.ridge_model, self.X_test, self.y_test)
-
-            # for metric_name, metric_value in self.ridge_metrics.items():
-            #     mlflow.log_metric(metric_name, metric_value)
+            self.ridge_metrics = self.evaluate_model(self.ridge_model, self.X_train, self.X_test, self.y_train, self.y_test)
 
             wandb.log(self.ridge_metrics)
 
-            artifact = wandb.Artifact(name=f"Ridge_artifacts_{iteration}", type = "dataset_and_reports")
-            artifact.add_file(str(self.artifact_dir / "data_version.json"))
-            artifact.add_file(str(self.artifact_dir / "validation_report.json"))
-            artifact.add_file(str(self.artifact_dir / "feature_info.json"))
-            run.log_artifact(artifact)
+            # artifact = wandb.Artifact(name=f"Ridge_artifacts_{iteration}", type = "dataset_and_reports")
+            # artifact.add_file(str(self.artifact_dir / "data_version.json"))
+            # artifact.add_file(str(self.artifact_dir / "validation_report.json"))
+            # artifact.add_file(str(self.artifact_dir / "feature_info.json"))
+            # run.log_artifact(artifact)
 
-            model_path = "model.joblib"
-            joblib.dump(self.ridge_model, model_path)
-            model_artifact = wandb.Artifact(name = f"Ridge_model_{iteration}", type = "model")
-            model_artifact.add_file(model_path)
-            run.log_artifact(model_artifact)
-            # mlflow.sklearn.log_model(
-            #     self.rf_model,
-            #     "model",
-            #     skops_trusted_types=[
-            #         "sklearn.tree._tree.Tree"
-            #     ]
-            # )
+            # model_path = "model.joblib"
+            # joblib.dump(self.ridge_model, model_path)
+            # model_artifact = wandb.Artifact(name = f"Ridge_model_{iteration}", type = "model")
+            # model_artifact.add_file(model_path)
+            # run.log_artifact(model_artifact)
 
             self.ridge_run_id = run.id
 
@@ -340,45 +338,28 @@ class Car_Training_Model():
 
         with wandb.init(project = EXPERIMENT_NAME, group = "Lasso", name = f"Lasso_{iteration}", config = {**lasso_parms}) as run:
             self.lasso_model.fit(self.X_train, self.y_train)
-            self.lasso_metrics = self.evaluate_model(self.lasso_model, self.X_test, self.y_test)
+            self.lasso_metrics = self.evaluate_model(self.lasso_model, self.X_train, self.X_test, self.y_train, self.y_test)
 
-            # mlflow.log_param("model_type", "Lasso Regression")
-            # mlflow.log_param("alpha", alpha)
-            # mlflow.log_param("max_iter", max_iter)
-            # mlflow.log_param("train_rows", len(self.X_train))
-            # mlflow.log_param("test_rows", len(self.X_test))
-            # mlflow.log_param("data_sha256", self.data_hash)
-            # mlflow.log_param("random_state", self.random_state)
             wandb.log(self.lasso_metrics)
 
             # --------------------------------------------------------
             # Log supporting artifacts
             # --------------------------------------------------------
-            artifact = wandb.Artifact(name=f"Lasso_artifacts_{iteration}", type = "dataset_and_reports")
-            artifact.add_file(str(self.artifact_dir / "data_version.json"))
-            artifact.add_file(str(self.artifact_dir / "validation_report.json"))
-            artifact.add_file(str(self.artifact_dir / "feature_info.json"))
-            run.log_artifact(artifact)
+            # artifact = wandb.Artifact(name=f"Lasso_artifacts_{iteration}", type = "dataset_and_reports")
+            # artifact.add_file(str(self.artifact_dir / "data_version.json"))
+            # artifact.add_file(str(self.artifact_dir / "validation_report.json"))
+            # artifact.add_file(str(self.artifact_dir / "feature_info.json"))
+            # run.log_artifact(artifact)
 
             # --------------------------------------------------------
-            # MLflow model logging
-            #
-            # Random Forest contains sklearn.tree._tree.Tree objects.
-            # We explicitly trust this exact type because the model was
-            # trained locally from our own trusted source code/data.
+            # WandB model logging
             # --------------------------------------------------------
-            model_path = "model.joblib"
-            joblib.dump(self.lasso_model, model_path)
-            model_artifact = wandb.Artifact(name = f"Lasso_model_{iteration}", type = "model")
-            model_artifact.add_file(model_path)
-            run.log_artifact(model_artifact)
-            # mlflow.sklearn.log_model(
-            #     self.rf_model,
-            #     "model",
-            #     skops_trusted_types=[
-            #         "sklearn.tree._tree.Tree"
-            #     ]
-            # )
+            # model_path = "model.joblib"
+            # joblib.dump(self.lasso_model, model_path)
+            # model_artifact = wandb.Artifact(name = f"Lasso_model_{iteration}", type = "model")
+            # model_artifact.add_file(model_path)
+            # run.log_artifact(model_artifact)
+
 
             self.lasso_run_id = run.id
 
@@ -409,20 +390,7 @@ class Car_Training_Model():
             
             self.rf_model.fit(self.X_train, self.y_train)
 
-            self.rf_metrics = self.evaluate_model(
-                self.rf_model,
-                self.X_test,
-                self.y_test
-            )
-
-            # Log model parameters
-            # mlflow.log_params({
-            #     "model_type": "Random Forest",
-            #     **rf_params,
-            #     "train_rows": len(self.X_train),
-            #     "test_rows": len(self.y_test),
-            #     "data_sha256": self.data_hash,
-            # })
+            self.rf_metrics = self.evaluate_model(self.rf_model, self.X_train, self.X_test, self.y_train, self.y_test)
 
             # Log evaluation metrics
             wandb.log(self.rf_metrics)
@@ -430,31 +398,21 @@ class Car_Training_Model():
             # --------------------------------------------------------
             # Log supporting artifacts
             # --------------------------------------------------------
-            artifact = wandb.Artifact(name=f"RF_artifacts_{iteration}", type = "dataset_and_reports")
-            artifact.add_file(str(self.artifact_dir / "data_version.json"))
-            artifact.add_file(str(self.artifact_dir / "validation_report.json"))
-            artifact.add_file(str(self.artifact_dir / "feature_info.json"))
-            run.log_artifact(artifact)
+            # artifact = wandb.Artifact(name=f"RF_artifacts_{iteration}", type = "dataset_and_reports")
+            # artifact.add_file(str(self.artifact_dir / "data_version.json"))
+            # artifact.add_file(str(self.artifact_dir / "validation_report.json"))
+            # artifact.add_file(str(self.artifact_dir / "feature_info.json"))
+            # run.log_artifact(artifact)
 
             # --------------------------------------------------------
-            # MLflow model logging
-            #
-            # Random Forest contains sklearn.tree._tree.Tree objects.
-            # We explicitly trust this exact type because the model was
-            # trained locally from our own trusted source code/data.
+            # WandB model logging
             # --------------------------------------------------------
-            model_path = "model.joblib"
-            joblib.dump(self.rf_model, model_path)
-            model_artifact = wandb.Artifact(name = f"RF_model_{iteration}", type = "model")
-            model_artifact.add_file(model_path)
-            run.log_artifact(model_artifact)
-            # mlflow.sklearn.log_model(
-            #     self.rf_model,
-            #     "model",
-            #     skops_trusted_types=[
-            #         "sklearn.tree._tree.Tree"
-            #     ]
-            # )
+
+            # model_path = "model.joblib"
+            # joblib.dump(self.rf_model, model_path)
+            # model_artifact = wandb.Artifact(name = f"RF_model_{iteration}", type = "model")
+            # model_artifact.add_file(model_path)
+            # run.log_artifact(model_artifact)
 
             self.rf_run_id = run.id
 
@@ -495,53 +453,23 @@ class Car_Training_Model():
             # --------------------------------------------------------
             # Evaluate model
             # --------------------------------------------------------
-            self.xgb_metrics = self.evaluate_model(self.xgb_model, self.X_test, self.y_test)
+            self.xgb_metrics = self.evaluate_model(self.xgb_model, self.X_train, self.X_test, self.y_train, self.y_test)
 
-            # --------------------------------------------------------
-            # Log hyperparameters
-            # --------------------------------------------------------
-            # mlflow.log_params({
-            #     "model_type": "XGBoost",
-            #     **xgb_params,
-            #     "train_rows": len(self.X_train),
-            #     "test_rows": len(self.X_test),
-            #     "data_sha256": self.data_hash,
-            # })
-
-            # --------------------------------------------------------
-            # Log evaluation metrics
-            # --------------------------------------------------------
-            # for metric_name, metric_value in self.xgb_metrics.items():
-            #     mlflow.log_metric(
-            #         metric_name,
-            #         metric_value
-            #     )
             wandb.log(self.xgb_metrics)
 
             # --------------------------------------------------------
             # Log supporting artifacts
             # --------------------------------------------------------
-            artifact = wandb.Artifact(name=f"XGBoost_artifacts_{iteration}", type = "dataset_and_reports")
-            artifact.add_file(str(self.artifact_dir / "data_version.json"))
-            artifact.add_file(str(self.artifact_dir / "validation_report.json"))
-            artifact.add_file(str(self.artifact_dir / "feature_info.json"))
-            run.log_artifact(artifact)
-            # mlflow.log_artifact(
-            #     str(self.artifact_dir / "data_version.json")
-            # )
-
-            # mlflow.log_artifact(
-            #     str(self.artifact_dir / "validation_report.json")
-            # )
-
-            # mlflow.log_artifact(
-            #     str(self.artifact_dir / "feature_info.json")
-            # )
+            # artifact = wandb.Artifact(name=f"XGBoost_artifacts_{iteration}", type = "dataset_and_reports")
+            # artifact.add_file(str(self.artifact_dir / "data_version.json"))
+            # artifact.add_file(str(self.artifact_dir / "validation_report.json"))
+            # artifact.add_file(str(self.artifact_dir / "feature_info.json"))
+            # run.log_artifact(artifact)
 
             # --------------------------------------------------------
-            # Log XGBoost model to MLflow
+            # Log XGBoost model to WandB
             #
-            # MLflow/skops identifies these XGBoost classes as
+            # WandB/skops identifies these XGBoost classes as
             # untrusted during serialization:
             #
             #   xgboost.core.Booster
@@ -549,33 +477,24 @@ class Car_Training_Model():
             #
             # We explicitly trust ONLY those two types.
             # --------------------------------------------------------
-            model_path = "model.joblib"
-            joblib.dump(self.xgb_model, model_path)
-            model_artifact = wandb.Artifact(name = f"XGBoost_model_{iteration}", type = "model")
-            model_artifact.add_file(model_path)
-            run.log_artifact(model_artifact)
-            # mlflow.sklearn.log_model(
-            #     self.xgb_model,
-            #     "model",
-            #     skops_trusted_types=[
-            #         "xgboost.core.Booster",
-            #         "xgboost.sklearn.XGBRegressor"
-            #     ]
-            # )
+            # model_path = "model.joblib"
+            # joblib.dump(self.xgb_model, model_path)
+            # model_artifact = wandb.Artifact(name = f"XGBoost_model_{iteration}", type = "model")
+            # model_artifact.add_file(model_path)
+            # run.log_artifact(model_artifact)
 
             self.xgb_run_id = run.id
 
         print("XGBoost metrics:", self.xgb_metrics)
         print("Run ID:", self.xgb_run_id)
 
-    def full_model_train(self, iteration):
-        self.ridge(iteration)
-        self.lasso(iteration)
-        self.random_forest(iteration)
-        self.xgBoost(iteration)
+    def full_model_train(self, iteration, ridge_alpha = 10, lasso_alpha = 0.001, lasso_max_iter = 5000, rf_n_estimators = 500, xgb_alpha = 0.05, n_estimators = 300):
+        self.ridge(iteration, ridge_alpha)
+        self.lasso(iteration, lasso_alpha, lasso_max_iter)
+        self.random_forest(iteration, rf_n_estimators)
+        self.xgBoost(iteration, n_estimators=n_estimators, learning_rate=xgb_alpha)
 
     def model_comparison(self):
-
         results = pd.DataFrame([
             {"Model": "Ridge Regression", **self.ridge_metrics, "Run ID": self.ridge_run_id},
             {"Model": "Lasso Regression", **self.lasso_metrics, "Run ID": self.lasso_run_id},
@@ -583,7 +502,7 @@ class Car_Training_Model():
             {"Model": "XGBoost", **self.xgb_metrics, "Run ID": self.xgb_run_id},
         ])
 
-        results = results.sort_values("RMSE").reset_index(drop=True) # Why RMSE?
+        results = results.sort_values("RMSE_TEST").reset_index(drop=True) # Why RMSE?
 
         results.to_csv(self.artifact_dir / "model_comparison.csv", index=False)
 
@@ -615,55 +534,34 @@ def main():
     # mlflow_db = "sqlite:///mlflow.db"
     # mlflow.set_tracking_uri(mlflow_db)
 
-    print("MLflow tracking URI:", mlflow.get_tracking_uri()) 
         
     # mlflow.set_experiment(EXPERIMENT_NAME)
     print("Experiment:", EXPERIMENT_NAME)
+
+    # Base - ridge_alpha, lasso_alpha, lasso_max_iter, rf_n_estimators, xgb_alpha, n_estimators
+    exp = [[10, 0.001, 5000, 500, 0.0, 300], [1.0, 0.01, 1000, 100, 0.5, 100], [0.1, 0.01, 5000, 200, 0.5, 500], [100.0, 0.0001, 1000, 1000, 0.5, 1000], [1000.0, 0.0001, 5000, 2000, 0.5, 1500]]
     
-    num_iterations = 20
-    for iteration in range(0, num_iterations):
-        new_model_round = Car_Training_Model()
-        new_model_round.data_validation()
-        new_model_round.features()
-        new_model_round.split_data()
-        new_model_round.preprocessing()     
+    num_iterations = 30
 
-        new_model_round.full_model_train(iteration)
+    for items in exp:
 
-        best_run_id = new_model_round.model_comparison()
+        for iteration in range(0, num_iterations):
+            new_model_round = Car_Training_Model()
+            new_model_round.data_validation()
+            new_model_round.features()
+            new_model_round.split_data()
+            new_model_round.preprocessing()     
 
-        MODEL_REGISTRY_NAME = "CarPricePrediction"
+            new_model_round.full_model_train(iteration, ridge_alpha = items[0], lasso_alpha = items[1], lasso_max_iter = items[2], rf_n_estimators = items[3], xgb_alpha = items[4], n_estimators = items[5])
 
-        client = mlflow.tracking.MlflowClient()
+            # best_run_id = new_model_round.model_comparison()
 
-        # The best model was already logged under its original run.
-        # Register that logged model as a version in the model registry.
-        model_uri = f"runs:/{best_run_id}/model"
+            MODEL_REGISTRY_NAME = "CarPricePrediction"
 
-        try:
-            registered = mlflow.register_model(
-                model_uri=model_uri,
-                name=MODEL_REGISTRY_NAME
-            )
+            # The best model was already logged under its original run.
+            # Register that logged model as a version in the model registry.
+            # model_uri = f"runs:/{best_run_id}/model"
 
-            version_number = registered.version
-
-            # MLflow aliases provide a current-model pointer.
-            client.set_registered_model_alias(
-                MODEL_REGISTRY_NAME,
-                "champion",
-                version_number
-            )
-
-            print(f"Registered model: {MODEL_REGISTRY_NAME}")
-            print(f"Version: {version_number}")
-            print("Alias: champion")
-
-        except Exception as e:
-            print("Model registry step did not complete.")
-            print("If your MLflow version/backend does not support local registry storage,")
-            print("the model is still versioned by its MLflow run ID and saved artifact.")
-            print("Details:", e)
 
 # This should do everything up to 18
 if __name__ == "__main__":

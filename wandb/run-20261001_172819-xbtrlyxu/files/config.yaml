@@ -1,0 +1,75 @@
+_wandb:
+    value:
+        cli_version: 0.30.0
+        e:
+            r9nk8szx1qi65gkb2i3tyx5z7p36q692:
+                apple:
+                    ecpuCores: 6
+                    gpuCores: 10
+                    macModel: Mac16,1
+                    memoryGb: 16
+                    name: Apple M4
+                    pcpuCores: 4
+                    ramTotalBytes: "17179869184"
+                    swapTotalBytes: "3221225472"
+                codePath: mvp_class.py
+                codePathLocal: mvp_class.py
+                cpu_count: 10
+                cpu_count_logical: 10
+                disk:
+                    /:
+                        total: "494384795648"
+                        used: "347828686848"
+                email: biemilbt@mail.uc.edu
+                executable: /opt/homebrew/opt/python@3.14/bin/python3.14
+                git:
+                    commit: 4b772697db5817372978e19234ba92fe48020e62
+                    remote: git@github.com:RichieXL/used-car-price-prediction.git
+                host: MacBook-Pro-2.local
+                memory:
+                    total: "17179869184"
+                os: macOS-26.6.2-arm64-arm-64bit-Mach-O
+                program: /Users/brynbiemiller/Desktop/used-car-price-prediction/mvp_class.py
+                python: CPython 3.14.7
+                root: /Users/brynbiemiller/Desktop/used-car-price-prediction
+                startedAt: "2026-10-01T21:28:19.471223Z"
+                writerId: r9nk8szx1qi65gkb2i3tyx5z7p36q692
+        m: []
+        python_version: 3.14.7
+        t:
+            "1":
+                - 5
+                - 6
+                - 53
+            "2":
+                - 5
+                - 6
+                - 53
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.14.7
+            "5": 0.30.0
+            "12": 0.30.0
+            "13": darwin-arm64
+data_sha256:
+    value: f6c1f0fe3b580fa8387e8c5c7927f0bce816cd71f45a10546655bf37ee630379
+max_depth:
+    value: null
+max_features:
+    value: 0.5
+min_samples_leaf:
+    value: 2
+model_type:
+    value: Random Forest
+n_estimators:
+    value: 500
+n_jobs:
+    value: -1
+random_state:
+    value: 231
+test_rows:
+    value: 10000
+train_rows:
+    value: 40000

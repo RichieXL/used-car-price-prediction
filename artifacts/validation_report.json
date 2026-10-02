@@ -1,0 +1,9 @@
+{
+    "required_columns_present": true,
+    "missing_values": 0,
+    "duplicate_rows": 0,
+    "negative_selling_prices": 0,
+    "negative_odometer": 0,
+    "invalid_vehicle_years": 0,
+    "non_numeric_target": false
+}
