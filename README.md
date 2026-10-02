@@ -1,8 +1,11 @@
-# Used Car Resale Price Prediction
+<h1 align="center">
+  Used Car Resale Price Prediction
+</h1>
 
 <p align="center">
   <img src="UsedCar_price_image.png" alt="Used Car Price Prediction" width="850">
 </p>
+
 
 <p align="center">
   <strong>A machine learning system for estimating used vehicle resale prices using vehicle characteristics and historical market data.</strong>
@@ -12,7 +15,9 @@
   BANA 7075 — Machine Learning Systems Design
 </p>
 
-**Team:** Derek Weaver, Jake Bayman, Adam Ouahidy, Richie James, Bryn Biemiller
+<h3 align="center">
+  Team: Derek Weaver, Jake Bayman, Adam Ouahidy, Richie James, Bryn Biemiller
+</h3>
 
 ## Project Overview
 
@@ -56,20 +61,3 @@ The system connects data ingestion, processing, model development, experiment tr
 <p align="center">
   <img src="ArcFlow.png" alt="Used Car Price Prediction System Architecture" width="1000">
 </p>
-
-```text
-Raw Data
-    ↓
-Ingestion
-    ↓
-Cleaning & Processing
-    ↓
-Validation
-    ↓
-Data Versioning
-    ↓
-Model Training
-    ↓
-Evaluation
-
-
