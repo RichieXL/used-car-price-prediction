@@ -1,0 +1,30 @@
+{
+    "target": "Selling Price",
+    "numeric_features": [
+        "Year",
+        "Odometer",
+        "Market Price",
+        "Sale Year",
+        "Sale Month",
+        "Sale Day of Week",
+        "Vehicle Age"
+    ],
+    "categorical_features": [
+        "Make",
+        "Model",
+        "Trim",
+        "Body",
+        "Transmission",
+        "Color",
+        "Interior",
+        "State"
+    ],
+    "excluded_columns": [
+        "Vehicle Identification Number",
+        "Sale Date",
+        "Sale Month Name",
+        "Sale Day Name",
+        "State Code",
+        "Seller"
+    ]
+}

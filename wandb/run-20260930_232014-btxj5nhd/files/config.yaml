@@ -1,0 +1,67 @@
+_wandb:
+    value:
+        cli_version: 0.30.0
+        e:
+            ak4x9n8uicpkm3xv571ks4xk8ipf78pq:
+                apple:
+                    ecpuCores: 6
+                    gpuCores: 10
+                    macModel: Mac16,1
+                    memoryGb: 16
+                    name: Apple M4
+                    pcpuCores: 4
+                    ramTotalBytes: "17179869184"
+                    swapTotalBytes: "3221225472"
+                codePath: mvp_class.py
+                codePathLocal: mvp_class.py
+                cpu_count: 10
+                cpu_count_logical: 10
+                disk:
+                    /:
+                        total: "494384795648"
+                        used: "346128334848"
+                email: biemilbt@mail.uc.edu
+                executable: /opt/homebrew/opt/python@3.14/bin/python3.14
+                git:
+                    commit: 4b772697db5817372978e19234ba92fe48020e62
+                    remote: git@github.com:RichieXL/used-car-price-prediction.git
+                host: MacBook-Pro-2.local
+                memory:
+                    total: "17179869184"
+                os: macOS-26.6.2-arm64-arm-64bit-Mach-O
+                program: /Users/brynbiemiller/Desktop/used-car-price-prediction/mvp_class.py
+                python: CPython 3.14.7
+                root: /Users/brynbiemiller/Desktop/used-car-price-prediction
+                startedAt: "2026-10-01T03:20:14.827386Z"
+                writerId: ak4x9n8uicpkm3xv571ks4xk8ipf78pq
+        m: []
+        python_version: 3.14.7
+        t:
+            "1":
+                - 5
+                - 6
+                - 53
+            "2":
+                - 5
+                - 6
+                - 53
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.14.7
+            "5": 0.30.0
+            "12": 0.30.0
+            "13": darwin-arm64
+alpha:
+    value: 10
+data_sha256:
+    value: f6c1f0fe3b580fa8387e8c5c7927f0bce816cd71f45a10546655bf37ee630379
+model_type:
+    value: Ridge Regression
+random_state:
+    value: 120
+test_rows:
+    value: 10000
+train_rows:
+    value: 40000

@@ -1,0 +1,17 @@
+{
+  "os":  "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "python":  "CPython 3.14.7",
+  "startedAt":  "2026-10-01T03:17:36.961422Z",
+  "program":  "/Users/brynbiemiller/Desktop/used-car-price-prediction/mvp_class.py",
+  "codePath":  "mvp_class.py",
+  "codePathLocal":  "mvp_class.py",
+  "git":  {
+    "remote":  "git@github.com:RichieXL/used-car-price-prediction.git",
+    "commit":  "4b772697db5817372978e19234ba92fe48020e62"
+  },
+  "email":  "biemilbt@mail.uc.edu",
+  "root":  "/Users/brynbiemiller/Desktop/used-car-price-prediction",
+  "host":  "MacBook-Pro-2.local",
+  "executable":  "/opt/homebrew/opt/python@3.14/bin/python3.14",
+  "writerId":  "gst5m2t95g318l9m0bayi724hy7z8wip"
+}
