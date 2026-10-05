@@ -4,6 +4,6 @@
     "rows": 459343,
     "columns": 21,
     "target": "Selling Price",
-    "random_state": 142,
+    "random_state": 42,
     "mvp_sample_size": 50000
 }
